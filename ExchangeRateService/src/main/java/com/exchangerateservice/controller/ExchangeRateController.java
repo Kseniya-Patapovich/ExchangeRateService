@@ -20,12 +20,10 @@ import java.util.Optional;
 @RequestMapping("/exchange-rate")
 public class ExchangeRateController {
     private final ExchangeRateService exchangeRateService;
-    private final ExchangeRateRepository exchangeRateRepository;
 
     @Autowired
-    public ExchangeRateController(ExchangeRateService exchangeRateService, ExchangeRateRepository exchangeRateRepository) {
+    public ExchangeRateController(ExchangeRateService exchangeRateService) {
         this.exchangeRateService = exchangeRateService;
-        this.exchangeRateRepository = exchangeRateRepository;
     }
 
     @GetMapping("/load")
@@ -33,14 +31,14 @@ public class ExchangeRateController {
         try {
             List<ExchangeRate> rates = exchangeRateService.fetchAndSaveExchangeRates(date);
             return ResponseEntity.ok("Data loaded successfully: " + rates.size() + " rates");
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error loading data: " + e.getMessage());
         }
     }
 
     @GetMapping
-    public ResponseEntity<ExchangeRate> getExchangeRate(@RequestParam("currencyCode") String currencyCode, @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
-        Optional<ExchangeRate> exchangeRate = exchangeRateRepository.findByDateAndCurrencyCode(date, currencyCode);
+    public ResponseEntity<ExchangeRate> getExchangeRate(@RequestParam("currencyCode") String currencyCode, @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        Optional<ExchangeRate> exchangeRate = exchangeRateService.getExchangeRateByDateAndCurrency(date, currencyCode);
         return exchangeRate.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }

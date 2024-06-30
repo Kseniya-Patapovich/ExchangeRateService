@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +38,11 @@ public class ExchangeRateService {
         } else {
             throw new RuntimeException("Failed to fetch data from NBRB");
         }
+    }
+
+    public Optional<ExchangeRate> getExchangeRateByDateAndCurrency(LocalDate date, String currencyCode) {
+        return Optional.ofNullable(exchangeRateRepository.findByDateAndCurrencyCode(date, currencyCode)
+                .orElseThrow(() -> new RuntimeException("Exchange rate not found")));
     }
 
     private ExchangeRate mapToExchangeRate(ExchangeRateResponse response) {
