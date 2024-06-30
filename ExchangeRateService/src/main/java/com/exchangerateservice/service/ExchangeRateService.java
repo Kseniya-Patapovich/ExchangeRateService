@@ -3,11 +3,15 @@ package com.exchangerateservice.service;
 import com.exchangerateservice.model.ExchangeRate;
 import com.exchangerateservice.model.dto.ExchangeRateResponse;
 import com.exchangerateservice.repository.ExchangeRateRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -16,17 +20,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ExchangeRateService {
     private final RestTemplate restTemplate;
     private final ExchangeRateRepository exchangeRateRepository;
 
-    @Autowired
-    public ExchangeRateService(RestTemplate restTemplate, ExchangeRateRepository exchangeRateRepository) {
-        this.restTemplate = restTemplate;
-        this.exchangeRateRepository = exchangeRateRepository;
-    }
-
-    public List<ExchangeRate> fetchAndSaveExchangeRates(LocalDate date) {
+    public Integer fetchAndSaveExchangeRates(LocalDate date) {
         String url = String.format("https://www.nbrb.by/api/exrates/rates?ondate=%s&periodicity=0", date);
         ResponseEntity<ExchangeRateResponse[]> response = restTemplate.getForEntity(url, ExchangeRateResponse[].class);
         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
@@ -34,9 +33,9 @@ public class ExchangeRateService {
                     .map(this::mapToExchangeRate)
                     .collect(Collectors.toList());
             exchangeRateRepository.saveAll(rates);
-            return rates;
+            return rates.size();
         } else {
-            throw new RuntimeException("Failed to fetch data from NBRB");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Failed to fetch data from NBRB");
         }
     }
 

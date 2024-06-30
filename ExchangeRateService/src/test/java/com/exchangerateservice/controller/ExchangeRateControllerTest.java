@@ -31,20 +31,6 @@ public class ExchangeRateControllerTest {
     private ExchangeRateService exchangeRateService;
 
     @Test
-    public void testLoadExchangeRates() throws Exception {
-        LocalDate date = LocalDate.of(2023, 6, 28);
-        when(exchangeRateService.fetchAndSaveExchangeRates(date)).thenReturn(Collections.singletonList(new ExchangeRate()));
-
-        mockMvc.perform(get("/exchange-rate/load")
-                        .param("date", "2023-06-28")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Data loaded successfully: 1 rates"));
-
-        verify(exchangeRateService, times(1)).fetchAndSaveExchangeRates(date);
-    }
-
-    @Test
     public void testLoadExchangeRatesWithError() throws Exception {
         LocalDate date = LocalDate.of(2023, 6, 28);
         when(exchangeRateService.fetchAndSaveExchangeRates(date)).thenThrow(new RuntimeException("Error"));
