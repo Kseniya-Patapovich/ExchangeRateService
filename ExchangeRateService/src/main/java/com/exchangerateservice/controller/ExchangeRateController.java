@@ -1,7 +1,6 @@
 package com.exchangerateservice.controller;
 
 import com.exchangerateservice.model.ExchangeRate;
-import com.exchangerateservice.repository.ExchangeRateRepository;
 import com.exchangerateservice.service.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
