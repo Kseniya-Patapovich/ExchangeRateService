@@ -9,20 +9,20 @@
 - H2 Database
 
 ## Installation and launch
-1. Клонируйте репозиторий:
+1. Clone the repository:
 
     ```bash
     git clone https://github.com/yourusername/exchange-rate-service.git
     cd exchange-rate-service
     ```
 
-2. Соберите проект с помощью Maven:
+2. Build a project using Maven:
 
     ```bash
     mvn clean install
     ```
 
-3. Запустите приложение:
+3. Launch the application:
 
     ```bash
     mvn spring-boot:run
