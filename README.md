@@ -76,3 +76,5 @@
       "rate": 2.5
     }
     ```
+
+### Developed Kseniya Patapovich
